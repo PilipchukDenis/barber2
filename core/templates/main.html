@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load tags %}
+
+{% block title %}Барбершоп "Арбуз"{% endblock %}
+
+{% block content %}
+
+<section class="hero_section">
+    <div class="hero_div">Добро пожаловать в барбершоп "Арбуз"!
+
+        <img src="{% static "images/nav.png" %}" alt="">
+    </div>
+</section>
+
+<section id="masters" class="masters">
+    <h3>Наши мастера:</h3>
+    <div class="master_gallery">
+        {% for master in masters %}
+            <div class="master_card">
+                <div class="bold">{{master.first_name}} {{master.last_name}}</div>
+                <img src="{{master.photo.url}}" alt="">
+                Мастер-барбер
+            </div>
+        {% endfor %}
+    </div>
+</section>
+
+<section id='services' class="services">
+    <h3>Наши услуги:</h3>
+    <div class="service_gallery">
+        {% for service in services %}
+            <div class="service_card">
+                <div class="bold">{{service.name}}</div>
+                <div class="service_price">{{service.price}} руб.</div>
+                <div class="service_descr">{{service.description}}</div>
+            </div>
+        {% endfor %}
+    </div>
+</section>
+
+<section id='orderForm' class="service_form">
+    <h3>Записаться на стрижку:</h3>
+    <form action="" method="post">
+        {% csrf_token %}
+        {% for field in form %}
+            {{field}}
+        {% endfor %}
+        <button type="submit">
+            Записаться
+        </button>
+    </form>
+</section>
+
+<section id='reviews'>
+    <h3>Отзывы посетителей:</h3>
+    <div class="review_gallery">
+    {% for review in reviews  %}
+        <div class="review_box">
+            <span>{{review.name}}</span>
+            <p><span>Оценка:</span> {{review.rating}}/5</p>
+            <p><span>Мастер:</span> {{review.master}}</p>
+            <p>{{review.text}}</p>
+        </div>
+    {% endfor %}
+    </div>
+    <div class="pages">
+    {% if reviews.has_previous and reviews.previous_page_number > 1 %}
+    <a href="?{% query_transform page=1 %}">1</a> |
+    {% endif %}
+    {% if reviews.has_previous and reviews.previous_page_number > 1|add:1 %}
+        <span>... |</span>
+    {% endif %}
+    {% if reviews.has_previous %}
+        <a href="?{% query_transform page=reviews.previous_page_number %}">{{reviews.previous_page_number}}</a> |
+    {% endif %}
+    <span class="now_page"> {{reviews.number}}</span>
+    {% if reviews.has_next  %}
+    | <a href="?{% query_transform page=reviews.next_page_number %}">{{reviews.next_page_number}}</a>
+    {% endif %}
+    {% if reviews.has_next and reviews.next_page_number < reviews.paginator.num_pages|add:-1 %}
+        <span> | ... </span>
+    {% endif %}
+    {% if reviews.next_page_number != reviews.paginator.num_pages %}
+    | <a href="?{% query_transform page=reviews.paginator.num_pages %}">{{reviews.paginator.num_pages}}</a>
+    {% endif %}
+    {% if page %}{% endif %}
+</div>
+</section>
+
+{% endblock content %}
